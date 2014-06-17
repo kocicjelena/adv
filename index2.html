@@ -129,7 +129,18 @@ ul.touch li.ui-li-has-alt a.ui-btn {
 <div data-role="page" id="demo-page" data-title="Inbox" data-url="demo-page" tabindex="0" class="ui-page ui-page-theme-a ui-page-header-fixed ui-page-active" style="padding-top: 47px; min-height: 954px;">
     <div data-role="header" data-position="fixed" data-theme="b" role="banner" class="ui-header ui-bar-b ui-header-fixed slidedown">
         <h1 class="ui-title" role="heading" aria-level="1">Inbox</h1>
-	
+		<div data-role="controlgroup" data-type="horizontal" data-mini="true">
+    <a href="#" class="ui-shadow ui-btn ui-corner-all ui-btn-icon-left ui-icon-plus ui-btn-b">Add</a>
+    <a href="#" class="ui-shadow ui-btn ui-corner-all ui-btn-icon-left ui-icon-delete ui-btn-b">Delete</a>
+    <a href="#" class="ui-shadow ui-btn ui-corner-all ui-btn-icon-left ui-icon-grid ui-btn-b">More</a>
+	<label for="select-choice-1" class="select">Select, native menu</label>
+<select name="select-choice-1" id="select-choice-1">
+    <option id="7demo-page" value="standard">Standard: 7 day</option>
+    <option value="rush">Rush: 3 days</option>
+    <option value="express">Express: next day</option>
+    <option value="overnight">Overnight</option>
+</select>
+</div>
         <a href="#demo-intro" data-rel="back" data-icon="carat-l" data-iconpos="notext" class="ui-link ui-btn-left ui-btn ui-icon-carat-l ui-btn-icon-notext ui-shadow ui-corner-all ui-btn-active" data-role="button" role="button">Back</a>
         <a href="#" onclick="window.location.reload()" data-icon="back" data-iconpos="notext" class="ui-link ui-btn-right ui-btn ui-icon-back ui-btn-icon-notext ui-shadow ui-corner-all" data-role="button" role="button">Refresh</a>
     </div><!-- /header -->
@@ -144,7 +155,7 @@ ul.touch li.ui-li-has-alt a.ui-btn {
                 </a>
                 <a href="#" class="delete ui-btn ui-btn-icon-notext ui-icon-delete" title="Delete"></a>
             </li>
-            <li class="ui-li-has-alt">
+            <li id="7demo-page" class="ui-li-has-alt">
                 <a href="#demo-mail" class="ui-btn">
                     <h3>Mike Taylor</h3>
                     <p class="topic"><strong>Re: This weekend in Maine</strong></p>
@@ -162,7 +173,7 @@ ul.touch li.ui-li-has-alt a.ui-btn {
                 </a>
                 <a href="#" class="delete ui-btn ui-btn-icon-notext ui-icon-delete" title="Delete"></a>
             </li>
-            <li class="ui-li-has-alt">
+            <li id="7demo-page" class="ui-li-has-alt">
                 <a href="#demo-mail" class="ui-btn">
                     <h3>Angela Smith</h3>
                     <p class="topic"><strong>Link Request</strong></p>
@@ -255,25 +266,9 @@ ul.touch li.ui-li-has-alt a.ui-btn {
         </ul>
     </div><!-- /content -->
     <div style="display: none;" id="confirm-placeholder"><!-- placeholder for confirm --></div><!-- /popup -->
-<div class="ui-popup-screen ui-overlay-inherit ui-screen-hidden" id="confirm-screen" style="height: 1499px;"></div>
-<div class="ui-popup-container ui-popup-hidden ui-popup-truncate" id="confirm-popup">
-<div id="confirm" class="ui-content ui-popup ui-body-a ui-overlay-shadow ui-corner-all" data-role="popup" data-theme="a">
+<div class="ui-popup-screen ui-overlay-inherit ui-screen-hidden" id="confirm-screen" style="height: 1499px;"></div><div class="ui-popup-container ui-popup-hidden ui-popup-truncate" id="confirm-popup"><div id="confirm" class="ui-content ui-popup ui-body-a ui-overlay-shadow ui-corner-all" data-role="popup" data-theme="a">
         <p id="question">Are you sure you want to delete:</p><p class="topic"><strong>Re: Dinner Tonight</strong></p>
         <div class="ui-grid-a">
-		
-			<div data-role="controlgroup" data-type="horizontal" data-mini="true">
-    <a href="#" class="ui-shadow ui-btn ui-corner-all ui-btn-icon-left ui-icon-plus ui-btn-b">Add</a>
-    <a href="#" class="ui-shadow ui-btn ui-corner-all ui-btn-icon-left ui-icon-delete ui-btn-b">Delete</a>
-    <a href="#" class="ui-shadow ui-btn ui-corner-all ui-btn-icon-left ui-icon-grid ui-btn-b">More</a>
-	<label for="select-choice-1" class="select">Select, native menu</label>
-<select name="select-choice-1" id="select-choice-1">
-    <option value="standard">Standard: 7 day</option>
-    <option value="rush">Rush: 3 days</option>
-    <option value="express">Express: next day</option>
-    <option value="overnight">Overnight</option>
-</select>
-</div>
-		
             <div class="ui-block-a">
                 <a id="yes" class="ui-btn ui-corner-all ui-mini ui-btn-a" data-rel="back">Yes</a>
             </div>
@@ -283,8 +278,7 @@ ul.touch li.ui-li-has-alt a.ui-btn {
 			<label for="file">File:</label>
 <input type="file" name="file" id="file" value="">
         </div>
-    </div></div>
-	</div>
+    </div></div></div>
 
 
 
