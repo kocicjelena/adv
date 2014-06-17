@@ -1,0 +1,355 @@
+<!DOCTYPE html> 
+<html> 
+<head> 
+  <meta name=viewport content="user-scalable=no,width=device-width" />
+  <title></title>
+  <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,700">
+ <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,700">
+  <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.2/jquery.mobile-1.4.2.min.css" />
+<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+<script src="http://code.jquery.com/mobile/1.4.2/jquery.mobile-1.4.2.min.js"></script>
+<script src="js/jquery.js"></script>
+<script src="js/jquery.mobile-1.4.2.min.js"></script>
+<script>
+var editable = document.getElementById('editable');
+
+addEvent(editable, 'blur', function () {
+  // lame that we're hooking the blur event
+  localStorage.setItem('contenteditable', this.innerHTML);
+  document.designMode = 'off';
+});
+
+addEvent(editable, 'focus', function () {
+  document.designMode = 'on';
+});
+
+addEvent(document.getElementById('clear'), 'click', function () {
+  localStorage.clear();
+  window.location = window.location; // refresh
+});
+
+if (localStorage.getItem('contenteditable')) {
+  editable.innerHTML = localStorage.getItem('contenteditable');
+}
+
+</script>
+<script>
+var holder = document.getElementById('holder'),
+    state = document.getElementById('status');
+
+if (typeof window.FileReader === 'undefined') {
+  state.className = 'fail';
+} else {
+  state.className = 'success';
+  state.innerHTML = 'File API & FileReader available';
+}
+ 
+holder.ondragover = function () { this.className = 'hover'; return false; };
+holder.ondragend = function () { this.className = ''; return false; };
+holder.ondrop = function (e) {
+  this.className = '';
+  e.preventDefault();
+
+  var file = e.dataTransfer.files[0],
+      reader = new FileReader();
+  reader.onload = function (event) {
+    console.log(event.target);
+    holder.style.background = 'url(' + event.target.result + ') no-repeat center';
+  };
+  console.log(file);
+  reader.readAsDataURL(file);
+
+  return false;
+};
+var host = document.querySelector('div');
+var root1 = host.webkitCreateShadowRoot();
+root.textContent = 'HTML5 Hello, World! 1';
+var root2 = host.webkitCreateShadowRoot();
+root2.textContent = 'HTML5 Hello, World! 2';
+</script>
+<style>
+/* Set the background image sources */
+#newyork { background-image: url("img/newyork.jpg"); }
+#buenosaires { background-image: url("img/buenosaires.jpg"); }
+#paris { background-image: url("img/paris.jpg"); }
+#capetown { background-image: url("img/capetown.jpg"); }
+#seoul { background-image: url("img/seoul.jpg"); }
+#sydney { background-image: url("img/sydney.jpg"); }
+/* Background settings */
+.demo-page {
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+/* Transparent footer */
+.demo-page .ui-footer {
+    background: none;
+    border: none;
+    bottom: 0;
+}
+/* The footer won't have a height because there are only two absolute positioned elements in it.
+So we position the buttons from the bottom. */
+.control.ui-btn-left,
+.trivia-btn.ui-btn-right {
+    top: auto;
+    bottom: 7px;
+    margin: 0;
+}
+/* Custom styling for the trivia source */
+small {
+    font-size: .75em;
+    color: #666;
+}
+</style>
+		<script>
+function startRead()
+{
+  // obtain input element through DOM 
+  
+  var file = document.getElementById('file').files[0];
+  if(file)
+	{
+    getAsText(file);
+  }
+}
+
+function getAsText(readFile)
+{
+	var reader;
+	try
+	{
+    reader = new FileReader();
+	}catch(e)
+	{
+		document.getElementById('output').innerHTML = 
+			"Error: seems File API is not supported on your browser";
+	  return;
+  }
+  
+  // Read file into memory as UTF-8      
+  reader.readAsText(readFile, "UTF-8");
+  
+  // Handle progress, success, and errors
+  reader.onprogress = updateProgress;
+  reader.onload = loaded;
+  reader.onerror = errorHandler;
+}
+
+function updateProgress(evt)
+{
+  if (evt.lengthComputable)
+	{
+    // evt.loaded and evt.total are ProgressEvent properties
+    var loaded = (evt.loaded / evt.total);
+    if (loaded < 1)
+		{
+      // Increase the prog bar length
+      // style.width = (loaded * 200) + "px";
+			document.getElementById("bar").style.width = (loaded*100) + "%";
+    }
+  }
+}
+
+function loaded(evt)
+{
+  // Obtain the read file data    
+  var fileString = evt.target.result;
+  document.getElementById('output').innerHTML = fileString;
+		document.getElementById("bar").style.width = 100 + "%";
+}
+
+function errorHandler(evt)
+{
+  if(evt.target.error.code == evt.target.error.NOT_READABLE_ERR)
+	{
+    // The file could not be read
+		document.getElementById('output').innerHTML = "Error reading file..."
+  }
+}
+		</script>
+		
+ <script> 
+// Pagecreate will fire for each of the pages in this demo
+// but we only need to bind once so we use "one()"
+$( document ).one( "pagecreate", ".demo-page", function() {
+    // Initialize the external persistent header and footer
+    $( "#header" ).toolbar({ theme: "b" });
+    $( "#footer" ).toolbar({ theme: "b" });
+    // Handler for navigating to the next page
+    function navnext( next ) {
+        $( ":mobile-pagecontainer" ).pagecontainer( "change", next + ".html", {
+            transition: "slide"
+        });
+    }
+    // Handler for navigating to the previous page
+    function navprev( prev ) {
+        $( ":mobile-pagecontainer" ).pagecontainer( "change", prev + ".html", {
+            transition: "slide",
+            reverse: true
+        });
+    }
+    // Navigate to the next page on swipeleft
+    $( document ).on( "swipeleft", ".ui-page", function( event ) {
+        // Get the filename of the next page. We stored that in the data-next
+        // attribute in the original markup.
+        var next = $( this ).jqmData( "next" );
+        // Check if there is a next page and
+        // swipes may also happen when the user highlights text, so ignore those.
+        // We're only interested in swipes on the page.
+        if ( next && ( event.target === $( this )[ 0 ] ) ) {
+            navnext( next );
+        }
+    });
+    // Navigate to the next page when the "next" button in the footer is clicked
+    $( document ).on( "click", ".next", function() {
+        var next = $( ".ui-page-active" ).jqmData( "next" );
+        // Check if there is a next page
+        if ( next ) {
+            navnext( next );
+        }
+    });
+    // The same for the navigating to the previous page
+    $( document ).on( "swiperight", ".ui-page", function( event ) {
+        var prev = $( this ).jqmData( "prev" );
+        if ( prev && ( event.target === $( this )[ 0 ] ) ) {
+            navprev( prev );
+        }
+    });
+    $( document ).on( "click", ".prev", function() {
+        var prev = $( ".ui-page-active" ).jqmData( "prev" );
+        if ( prev ) {
+            navprev( prev );
+        }
+    });
+});
+$( document ).on( "pageshow", ".demo-page", function() {
+    var thePage = $( this ),
+        title = thePage.jqmData( "title" ),
+        next = thePage.jqmData( "next" ),
+        prev = thePage.jqmData( "prev" );
+    // Point the "Trivia" button to the popup for the current page.
+    $( "#trivia-button" ).attr( "href", "#" + thePage.find( ".trivia" ).attr( "id" ) );
+    // We use the same header on each page
+    // so we have to update the title
+    $( "#header h1" ).text( title );
+    // Prefetch the next page
+    // We added data-dom-cache="true" to the page so it won't be deleted
+    // so there is no need to prefetch it
+    if ( next ) {
+        $( ":mobile-pagecontainer" ).pagecontainer( "load", next + ".html" );
+    }
+    // We disable the next or previous buttons in the footer
+    // if there is no next or previous page
+    // We use the same footer on each page
+    // so first we remove the disabled class if it is there
+    $( ".next.ui-state-disabled, .prev.ui-state-disabled" ).removeClass( "ui-state-disabled" );
+    if ( ! next ) {
+        $( ".next" ).addClass( "ui-state-disabled" );
+    }
+    if ( ! prev ) {
+        $( ".prev" ).addClass( "ui-state-disabled" );
+    }
+});
+	 </script> 	 
+
+</head> 
+
+<body> 
+
+<div data-role=page id=home>
+  <div data-role=header>
+    <h1>Home</h1>
+	
+		<h2><a href="../" title=""><img src="img/jquery-logo.png" alt="jQuery Mobile"></a></h2>
+		
+						<a href="sign_up.html" data-transition="slidedown" class="ui-btn ui-corner-all ui-shadow ui-btn-inline">sign up</a>
+					<a href="signin.html" data-transition="slidedown" class="ui-btn ui-corner-all ui-shadow ui-btn-inline">sign in</a>
+
+  </div>
+
+  <div data-role=content>
+    <p> Window content 1 </p>  
+    <a href=#win2 id=link1 data-role=button> Goto window 2 </a>
+	 <a href=#page2 id=link2 data-role=button> Goto page 2 </a>
+	 <a href=#win3 id=link3 data-role=button> Goto window 3 </a>
+	 <a href=index2.html id=demo-page data-role=button> inbox </a>
+		<a href="signup.html" data-transition="slidedown" class="ui-btn ui-corner-all ui-shadow ui-btn-inline">signup</a>
+					
+<input id="file" type="file" multiple onchange="startRead()">
+		
+		<h3>File contents:</h3>
+		<pre>
+			<code id="output">
+			</code>
+		</pre>
+<style>
+#holder { border: 10px dashed #ccc; width: 300px; height: 300px; margin: 20px auto;}
+#holder.hover { border: 10px dashed #333; }
+</style>
+<article>
+<section id="editable" contenteditable="true">
+  <div id="holder"></div> 
+  <p id="status"></p>
+  <p></p>
+</section>
+
+  <div>
+    <input type="button" id="clear" value="Clear changes" />
+  </div>
+</article>
+  </div>
+   <div data-role=content>
+    <p> </p>  
+    <div id=evt></div>
+  </div>
+    <div data-role="footer" data-position="fixed" data-tap-toggle="false" class="jqm-footer">
+		<p> ...  <span class="jqm-version"></span></p>
+
+
+		<p>we will countunue</p>
+	</div><!-- /footer -->
+</div>
+</div>
+<div data-role=page id=win2 data-add-back-btn=true>
+  <div data-role=header>
+    <h1>Window 2</h1>
+  </div>
+
+  <div data-role=content>
+    <p> Window content 2 </p>  
+	<div data-role="content">
+	<div data-role="controlgroup" data-type="horizontal" data-mini="true">
+    <a href="#" class="ui-shadow ui-btn ui-corner-all ui-btn-icon-left ui-icon-plus ui-btn-b">Add</a>
+    <a href="#" class="ui-shadow ui-btn ui-corner-all ui-btn-icon-left ui-icon-delete ui-btn-b">Delete</a>
+    <a href="#" class="ui-shadow ui-btn ui-corner-all ui-btn-icon-left ui-icon-grid ui-btn-b">More</a>
+	<label for="select-choice-1" class="select">Select, native menu</label>
+<select name="select-choice-1" id="select-choice-1">
+    <option value="standard">Standard: 7 day</option>
+    <option value="rush">Rush: 3 days</option>
+    <option value="express">Express: next day</option>
+    <option value="overnight">Overnight</option>
+</select>
+</div>
+</div>
+  </div>
+</div>
+<div data-role=page id=win3>
+  <div data-role=header>
+    <h1>Window 3</h1>
+  </div>
+  <div data-role=content>
+    <p> Window content 3 </p>  
+	<a href="page-transitions-page.html" data-transition="flip" class="ui-btn ui-corner-all ui-shadow ui-btn-inline">page</a>
+<a href="page-transitions-dialog.html" data-rel="dialog" data-transition="turn" class="ui-btn ui-corner-all ui-shadow ui-btn-inline">dialog</a>
+<a href="page-transitions-dialog.html" data-rel="dialog" data-transition="flow" class="ui-btn ui-corner-all ui-shadow ui-btn-inline">dialog</a>
+<a href="page-transitions-dialog.html" data-rel="dialog" data-transition="slidefade" class="ui-btn ui-corner-all ui-shadow ui-btn-inline">dialog</a>
+<a href="page-transitions-dialog.html" data-rel="dialog" data-transition="slide" class="ui-btn ui-corner-all ui-shadow ui-btn-inline">dialog</a>
+<a href="page-transitions-dialog.html" data-rel="dialog" data-transition="slideup" class="ui-btn ui-corner-all ui-shadow ui-btn-inline">dialog</a>
+<a href="page-transitions-dialog.html" data-rel="dialog" data-transition="slidedown" class="ui-btn ui-corner-all ui-shadow ui-btn-inline">dialog</a>
+<a href="page-transitions-dialog.html" data-rel="dialog" data-transition="none" class="ui-btn ui-corner-all ui-shadow ui-btn-inline">dialog</a>
+<a href="page-transitions-dialog.html" data-rel="dialog" data-transition="slidedown" class="ui-btn ui-corner-all ui-shadow ui-btn-inline">dialog</a>
+  </div>
+</div>
+</body>
+</html>

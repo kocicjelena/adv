@@ -1,0 +1,153 @@
+<!doctype html>
+<html>
+<head>
+</head>
+    
+<body>
+
+	<div data-role="page" id="page-success" data-dom-cache="true"><!-- page-->
+		<div data-role="header" data-theme="a">
+		<h1>Page</h1>
+		</div><!-- /header -->
+<script>
+var db;
+
+function indexedDBOk() {
+	return "indexedDB" in window;
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+
+	//No support? Go in the corner and pout.
+	if(!indexedDBOk) return;
+
+	var openRequest = indexedDB.open("idarticle_people5",1);
+
+	openRequest.onupgradeneeded = function(e) {
+		var thisDB = e.target.result;
+
+		if(!thisDB.objectStoreNames.contains("people")) {
+			var os = thisDB.createObjectStore("people", {autoIncrement:true});
+			//I want to get by name later
+			os.createIndex("name", "name", {unique:false});
+			//I want email to be unique
+			os.createIndex("email", "email", {unique:true});
+		}
+	}
+
+	openRequest.onsuccess = function(e) {
+		db = e.target.result;
+
+		//Listen for add clicks
+		document.querySelector("#addButton").addEventListener("click", addPerson, false);
+
+		//Listen for get clicks
+		document.querySelector("#getButton").addEventListener("click", getPerson, false);
+
+	}	
+
+	openRequest.onerror = function(e) {
+		//Do something for the error
+	}
+
+
+},false);
+
+
+function addPerson(e) {
+	var name = document.querySelector("#name").value;
+	var email = document.querySelector("#email").value;
+
+	console.log("About to add "+name+"/"+email);
+
+	//Get a transaction
+	//default for OS list is all, default for type is read
+	var transaction = db.transaction(["people"],"readwrite");
+	//Ask for the objectStore
+	var store = transaction.objectStore("people");
+
+	//Define a person
+	var person = {
+		name:name,
+		email:email,
+		created:new Date()
+	}
+
+	//Perform the add
+	var request = store.add(person);
+
+	request.onerror = function(e) {
+		alert("Sorry, that email address already exists.");
+		console.log("Error",e.target.error.name);
+		console.dir(e.target);
+		//some type of error handler
+	}
+
+	request.onsuccess = function(e) {
+		console.log("Woot! Did it");
+	}
+}
+
+function getPerson(e) {
+	var name = document.querySelector("#nameSearch").value;
+	if(name === "" ) return;
+
+	var transaction = db.transaction(["people"],"readonly");
+	var store = transaction.objectStore("people");
+	var index = store.index("name");
+
+	var request = index.get(name);
+
+	request.onsuccess = function(e) {
+
+		var result = e.target.result;
+		if(result) {
+			var s = "<h2>Name "+name+"</h2><p>";
+			for(var field in result) {
+				s+= field+"="+result[field]+"<br/>";
+			}
+			document.querySelector("#status").innerHTML = s;
+		} else {
+			document.querySelector("#status").innerHTML = "<h2>No match</h2>";
+		}	
+	}	
+
+
+}
+
+</script>
+		<div class="ui-content" role="main">
+	<input type="text" id="name" placeholder="Name"><br/>
+<input type="email" id="email" placeholder="Email"><br/>
+<button id="addButton">Add Data</button>
+
+<p/>
+	 <a href=#page2 id=link2> Goto window 2 </a>
+		<a href="index.html" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-inline" data-rel="back">Take me back</a>
+		
+
+		<div data-role="footer" data-theme="a">
+			<div style="margin:5px 10px;"><!-- To add a bit of spacing -->
+			<label for="search" class="ui-hidden-accessible">Search:</label>
+	        <input type="search" name="password" id="search" placeholder="Search..." value="">
+			</div>
+		</div><!-- /footer -->
+	</div>
+
+
+	<div data-role="page" id="page2" data-add-back-btn="true">
+<div data-role="header">
+</div>
+<div data-role="content">
+stampaj
+<input type="text" id="nameSearch" placeholder="Name"><br/>
+<button id="getButton">Get By Name</button>
+
+
+
+<div id="status"></div>
+</div></div>
+
+
+</body>
+</html>

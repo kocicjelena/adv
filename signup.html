@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title></title>
+	<link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,700">
+  <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.2/jquery.mobile-1.4.2.min.css" />
+<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+<script src="http://code.jquery.com/mobile/1.4.2/jquery.mobile-1.4.2.min.js"></script>
+   <script src="https://ajax.googleapis.com/ajax/libs/prototype/1.7.2.0/prototype.js"></script>
+	<link rel="stylesheet" href="css/themes/default/jquery.mobile-1.4.2.min.css">
+	<link rel="stylesheet" href="css/jqm-demos.css">
+	<script src="js/jquery.js"></script>
+	<script src="js/index.js"></script>
+	<script src="js/jquery.mobile-1.4.2.min.js"></script>
+ 
+
+
+</head>
+<body>
+	<script> 
+ var db;
+ function indexedDBOk() {
+	return "indexedDB" in window;
+}
+document.addEventListener("DOMContentLoaded", function() {
+
+	//No support? Go in the corner and pout.
+	if(!indexedDBOk) return;
+
+	var openRequest = indexedDB.open("i5",1);
+
+	openRequest.onupgradeneeded = function(e) {
+		var thisDB = e.target.result;
+
+		if(!thisDB.objectStoreNames.contains("people")) {
+			var os = thisDB.createObjectStore("people", {autoIncrement:true});
+			//I want to get by name later
+			os.createIndex("name", "name", {unique:false});
+			//I want email to be unique
+			os.createIndex("email", "email", {unique:true});
+		}
+	}
+
+	openRequest.onsuccess = function(e) {
+		db = e.target.result;
+
+		//Listen for add clicks
+		document.querySelector("#addButton").addEventListener("click", addPerson, false);
+
+		//Listen for get clicks
+		document.querySelector("#getButton").addEventListener("click", getPerson, false);
+
+	}	
+
+	openRequest.onerror = function(e) {
+		//Do something for the error
+	}
+
+
+},false);
+ function addPerson(e) {
+	var name = document.querySelector("#name").value;
+	var email = document.querySelector("#email").value;
+
+	console.log("About to add "+name+"/"+email);
+
+	//Get a transaction
+	//default for OS list is all, default for type is read
+	var transaction = db.transaction(["people"],"readwrite");
+	//Ask for the objectStore
+	var store = transaction.objectStore("people");
+
+	//Define a person
+	var person = {
+		name:name,
+		email:email,
+		created:new Date()
+	}
+
+	//Perform the add
+	var request = store.add(person);
+
+	request.onerror = function(e) {
+		alert("Sorry, that email address already exists.");
+		console.log("Error",e.target.error.name);
+		console.dir(e.target);
+		//some type of error handler
+	}
+
+	request.onsuccess = function(e) {
+		console.log("Woot! Did it");
+	}
+	$.mobile.changePage("#page2", {reverse:false, transition: "slide"});
+	return true;
+}
+
+function getPerson(e) {
+	var name = document.querySelector("#nameSearch").value;
+	if(name === "" ) return;
+
+	var transaction = db.transaction(["people"],"readonly");
+	var store = transaction.objectStore("people");
+	var index = store.index("name");
+
+	var request = index.get(name);
+
+	request.onsuccess = function(e) {
+
+		var result = e.target.result;
+		if(result) {
+			var s = "<h2>Name "+name+"</h2><p>";
+			for(var field in result) {
+				s+= field+"="+result[field]+"<br/>";
+			}
+			document.querySelector("#status").innerHTML = s;
+		} else {
+			document.querySelector("#status").innerHTML = "<h2>No match</h2>";
+		}	
+	}	
+
+
+}
+</script> 
+	<div data-role="page" id="page-success" data-dom-cache="true"><!-- page-->
+		<div data-role="header" data-theme="a">
+		<h1>Page</h1>
+		</div><!-- /header -->
+
+		<div class="ui-content" role="main">
+		<p> <code>data-transition</code> attribute on the link. This uses a different background theme swatch to see how that looks with the transitions.</p>
+		<p>Since it uses CSS animations, this should be hardware accelerated on many devices. To see transitions, 3D transform support is required so if you only saw a fade transition that's the reason.</p>
+
+			<form method="POST" onSubmit="return submitForm()" data-ajax="false">
+			<h2>Here's a few form elements</h2>
+
+			<p>These are here to see if this slows down rendering.</p>
+
+				<div class="ui-field-contain">
+		         <label for="usernamename">name:</label>
+		         <input type="text" name="name" id="name" value="">
+				  <label for="email">email:</label>
+				 <input type="email" name="email" id="name" value="">
+				</div>
+
+			
+
+<button id="addButton">Add Data</button>
+			</form>
+
+	 <a href=#page2 id=link1 onclick="successQueryDB()"> Goto window 2 </a>
+			<a href="index.html" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-inline" data-rel="back">Take me back</a>
+		
+
+		<div data-role="footer" data-theme="a">
+			<div style="margin:5px 10px;"><!-- To add a bit of spacing -->
+			<label for="search" class="ui-hidden-accessible">Search:</label>
+	        <input type="search" name="password" id="search" placeholder="Search..." value="">
+			</div>
+		</div><!-- /footer -->
+	</div>
+	</div>
+	<div data-role="page" id="page2" data-add-back-btn="true">
+<div data-role="header">
+</div>
+<div data-role="content">
+stampaj
+<input type="text" id="nameSearch" placeholder="Name"><br/>
+<button id="getButton">Get By Name</button>
+
+
+
+<div id="status"></div>
+</div></div>
+</body>
+</html>
